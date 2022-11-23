@@ -1,0 +1,19 @@
+We will delete the docker-compose.yaml and travis.yml file as k8s will handle all docker work and we will recreate travis.yaml file. 
+We will also delete nginx as that will be handled by Ingress Service of K8s.
+The need for volumes with Databases:
+PVC: Persistent Volume Claim. 
+Volume in generic container terminology: Some type of mechanism that allows a container to access a filesystem outside itself. 
+Volume in Kubernetes: An object that allows a container to store data at the pod level. When a pod is created the vollume will be created, but if the pod dies, then the volume will also die and all the data will be gone. 
+Persistent Volume: We are creating some type fo durable storage which is not tied to any specific pods. It is outside the pod so if the pod crashes or recreated then allso the Persistent volume will stay with all its data. 
+Persistent Volume Claim: It is like an advertisement where it is mentioned that we have 500 gig and 1tb ssd available. but in fact we just have 500gig available,so if a customer wants 1tb then K8s will create it on the fly. So PVC is just like that. 
+accessModes in PVC:
+i) ReadWriteOnce: Can be used by a single node.
+ii) ReadonlyMany: Multiple nodes can read from this. 
+iii) ReadWriteMany: Can be read and written to by many nodes. 
+K8s creates PVC by claiming an amount to storage from the host machine. So you do not have to define it while we are working in our local machine. 
+But while deploying the k8s cluster to any cloud provider then there are many options like Google Cloud Persistent Disk, AWS Block Store, Azure file, Azure Disk, etc. So here we need to mention the option where we want to create PVC and store our data. 
+To mention the same in the pvc config file please follow the instructions from https://kubernetes.io/docs/concepts/storage/storage-classes/
+Databse passwords will be added to secret variables and not in the k8s config files as a plain text. 
+Here we have updated the postgres, server and worker config files with environment variables. Created a secret for pgpassword and pass that value to the postgres and server configfile to get connected with the database. 
+Now we will convert environment variables as Strings: 
+We have provided some environment variables as integers such as the Ports of redis and postgres. To provide values in the environment variable we should provide as a string. So to do so we have to wrap the port with ''. eg: '6379'

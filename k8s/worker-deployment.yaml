@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: worker-deployment
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   component: worker
+ template:
+  metadata:
+   labels:
+    component: worker
+  spec:
+   containers:
+    - name: worker
+      image: stephengrider/multi-worker
+      env: #environment variable for redis credentials to get connected.
+       - name: REDIS_HOST
+         value: redis-cluster-ip-service #this is the endpoint to get connected with redis pod. like http://redis-cluster-ip-service as host.
+       - name: REDIS_PORT
+         value: '6379'
